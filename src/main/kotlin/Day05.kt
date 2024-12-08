@@ -1,6 +1,6 @@
 fun main() {
-    val lines = readInput("day05-example.txt")
-    // val lines = readInput("day05.txt")
+    //val lines = readInput("day05-example.txt")
+    val lines = readInput("day05.txt")
     val rules = mutableListOf<Pair<Int, Int>>()
     val updates = mutableListOf<List<Int>>()
 
@@ -23,7 +23,6 @@ fun main() {
     val invalidUpdates = splitUpdates.second
 
     println("Sum of valid updates " + validUpdates.sumOf { it.getMiddleElement() })
-    println(invalidUpdates[2].fixUpdate(rules))
     println("Sum of fixed updates " + invalidUpdates.sumOf { it.fixUpdate(rules).getMiddleElement() })
 }
 
@@ -37,18 +36,23 @@ private fun updateIsValid(update: List<Int>, rules: List<Pair<Int, Int>>): Boole
 
 private fun List<Int>.getMiddleElement() = this[this.size / 2]
 
-private fun List<Int>.fixUpdate(rules: List<Pair<Int, Int>>): List<Int> {
+private fun List<Int>.fixUpdate(rules: List<Pair<Int, Int>>): ArrayList<Int> {
     val update = ArrayList(this)
-    this.forEachIndexed { i, page ->
-        val subList = subList(0, i)
-        val rulesThatApply = rules.filter { (first, _) -> first == page }
+    if (!updateIsValid(this,rules)) {
 
-        subList.forEach {
-            if (rulesThatApply.any { (_, second) -> second == it }) {
-                update.remove(it)
-                update.add(i, it)
+        this.forEachIndexed { i, page ->
+            val subList = subList(0, i)
+            val rulesThatApply = rules.filter { (first, _) -> first == page }
+
+            subList.forEach {
+                if (rulesThatApply.any { (_, second) -> second == it }) {
+                    update.remove(it)
+                    update.add(i, it)
+                }
             }
         }
+        return update.fixUpdate(rules)
+    } else {
+        return update
     }
-    return update
 }
