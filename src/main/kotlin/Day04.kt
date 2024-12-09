@@ -1,7 +1,11 @@
 fun main() {
     val input = readInput("day04.txt").map { it.toCharArray() }
-    var count = 0
+    part1(input)
+    part2(input)
+}
 
+fun part1(input: List<CharArray>) {
+    var count = 0
     for (i in input.indices) {
         for (j in input[i].indices) {
 
@@ -49,5 +53,27 @@ fun main() {
         }
     }
 
-    println(count)
+    println("'XMAS' occurs $count times")
+}
+
+fun part2(input: List<CharArray>) {
+    var count = 0
+
+    for (i in 1..input.size - 2) {
+        for (j in 1..input[i].size - 2) {
+            if (input[i][j] == 'A') {
+                if (input[i - 1][j - 1] == 'M' && input[i - 1][j + 1] == 'M' && input[i + 1][j - 1] == 'S' && input[i + 1][j + 1] == 'S') {
+                    count++
+                } else if (input[i - 1][j - 1] == 'S' && input[i - 1][j + 1] == 'S' && input[i + 1][j - 1] == 'M' && input[i + 1][j + 1] == 'M') {
+                    count++
+                } else if (input[i - 1][j - 1] == 'M' && input[i - 1][j + 1] == 'S' && input[i + 1][j - 1] == 'M' && input[i + 1][j + 1] == 'S') {
+                    count++
+                } else if (input[i - 1][j - 1] == 'S' && input[i - 1][j + 1] == 'M' && input[i + 1][j - 1] == 'S' && input[i + 1][j + 1] == 'M') {
+                    count++
+                }
+            }
+        }
+    }
+
+    println("There are $count X-MASes")
 }
