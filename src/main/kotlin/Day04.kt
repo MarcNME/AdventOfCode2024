@@ -4,7 +4,7 @@ fun main() {
     part2(input)
 }
 
-fun part1(input: List<CharArray>) {
+private fun part1(input: List<CharArray>) {
     var count = 0
     for (i in input.indices) {
         for (j in input[i].indices) {
@@ -56,7 +56,7 @@ fun part1(input: List<CharArray>) {
     println("'XMAS' occurs $count times")
 }
 
-fun part2(input: List<CharArray>) {
+private fun part2(input: List<CharArray>) {
     var count = 0
 
     for (i in 1..input.size - 2) {
