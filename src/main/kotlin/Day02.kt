@@ -32,7 +32,7 @@ private fun List<Int>.isSaveWithDampener(): Boolean {
     return false
 }
 
-fun List<Int>.levelsDecreasing(): Boolean {
+private fun List<Int>.levelsDecreasing(): Boolean {
     for (i in this.indices) {
         if (i == 0) {
             continue
@@ -45,7 +45,7 @@ fun List<Int>.levelsDecreasing(): Boolean {
     return true
 }
 
-fun List<Int>.levelsIncreasing(): Boolean {
+private fun List<Int>.levelsIncreasing(): Boolean {
     for (i in this.indices) {
         if (i == 0) {
             continue
@@ -58,6 +58,6 @@ fun List<Int>.levelsIncreasing(): Boolean {
     return true
 }
 
-fun List<Int>.isSafe(): Boolean {
+private fun List<Int>.isSafe(): Boolean {
     return this.levelsDecreasing() || this.levelsIncreasing()
 }

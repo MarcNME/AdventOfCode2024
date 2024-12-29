@@ -18,7 +18,7 @@ fun main() {
     getSimilarity(firstList, secondList)
 }
 
-fun getTotalDistance(firstList: List<Int>, secondList: List<Int>) {
+private fun getTotalDistance(firstList: List<Int>, secondList: List<Int>) {
     if (firstList.size != secondList.size){
         error("Lists are different lengths")
     }
@@ -33,7 +33,7 @@ fun getTotalDistance(firstList: List<Int>, secondList: List<Int>) {
     println(sum)
 }
 
-fun getSimilarity(firstList: List<Int>, secondList: List<Int>) {
+private fun getSimilarity(firstList: List<Int>, secondList: List<Int>) {
     if (firstList.size != secondList.size){
         error("Lists are different lengths")
     }
