@@ -4,8 +4,13 @@ fun main() {
     //val input = File("./inputs/day09-example.txt").readText()
     val input = File("./inputs/day09.txt").readText()
     val disk = input.readBlocks()
-    disk.compact()
-    println(disk.calculateChecksum())
+    val compactedDisk = disk.toMutableList()
+    compactedDisk.compact()
+    println("Checksum of compacted disk: ${compactedDisk.calculateChecksum()}")
+
+    val unfragmentedDisk = disk.toMutableList()
+    unfragmentedDisk.defragment()
+    println("Checksum of unfragmented disk: ${unfragmentedDisk.calculateChecksum()}")
 }
 
 private interface Block
@@ -16,7 +21,6 @@ private class EmptyBlock() : Block {
 private class FullBlock(val id: Int) : Block {
     override fun toString() = id.toString()
 }
-
 
 private fun String.readBlocks(): MutableList<Block> {
     var isFile = true
@@ -64,4 +68,46 @@ private fun List<Block>.calculateChecksum(): Long {
         }
     }
     return sum
+}
+
+private fun List<Block>.getBiggestID(): Int {
+    var biggestId = 0
+    forEach { if (it is FullBlock && it.id > biggestId) biggestId = it.id }
+    return biggestId
+}
+
+private fun List<Block>.getStartOfFreeSpace(size: Int): Int {
+    var space = 0
+    var beginOfEmptySpace = 0
+    forEachIndexed { index, block ->
+        if (block is EmptyBlock) {
+            if (space++ == 0)
+                beginOfEmptySpace = index
+            if (space == size)
+                return beginOfEmptySpace
+        } else {
+            space = 0
+        }
+    }
+    return -1
+}
+
+private fun MutableList<Block>.defragment() {
+    var id = getBiggestID()
+
+    while (id >= 0) {
+        val indexOfFirstOccurrence = indexOfFirst { it is FullBlock && it.id == id }
+        val fileSize =
+            this.indexOfLast { it is FullBlock && it.id == id } - indexOfFirstOccurrence + 1
+        val startOfFreeSpace = getStartOfFreeSpace(fileSize)
+
+        if (startOfFreeSpace in 1..<indexOfFirstOccurrence) {
+            replaceAll { if (it is FullBlock && it.id == id) EmptyBlock() else it }
+            (0..<fileSize).forEach { index ->
+                this[startOfFreeSpace + index] = FullBlock(id)
+            }
+        }
+
+        id--
+    }
 }
