@@ -1,16 +1,18 @@
 import java.math.BigInteger
+import kotlin.time.measureTime
 
 private val ZERO = BigInteger.valueOf(0)
 private val ONE = BigInteger.valueOf(1)
 private val TWO_THOUSAND_TWENTY_FOUR: BigInteger = BigInteger.valueOf(2024)
 
 fun main() {
-    var input = readInput("day11.txt").flatMap { it.split(' ').map { str -> str.toBigInteger() } }
-
+    val input = readInput("day11.txt").flatMap { it.split(' ').map { str -> str.toBigInteger() } }
+    var stones1 = input.toList()
     for (i in 1..25) {
-        input = input.blink()
-        println("We have ${input.size} stones after $i blinks")
+        val duration1 = measureTime { stones1 = stones1.blink() }
+        println("We have ${stones1.size} stones after $i blinks. Took ${duration1.inWholeMilliseconds}ms")
     }
+    input.process()
 }
 
 private fun BigInteger.evenNumberOfDigits(): Boolean = toString().length % 2 == 0
@@ -32,4 +34,34 @@ private fun List<BigInteger>.blink(): List<BigInteger> {
         }
     }
     return copy
+}
+
+private fun List<BigInteger>.process() {
+    var stones = associate { it to 1L }
+    var tmp = mutableMapOf<BigInteger, Long>()
+    for (i in 1..75) {
+        val duration = measureTime {
+            stones.forEach { (stone, count) ->
+                if (stone == ZERO) {
+
+                    tmp[ONE] = tmp.getOrDefault(ONE, 0) + count
+                } else if (stone.evenNumberOfDigits()) {
+                    val stoneStr = stone.toString()
+                    val leftHalf = stoneStr.substring(0..<stoneStr.length / 2).toBigInteger()
+                    val rightHalf = stoneStr.substring(stoneStr.length / 2).toBigInteger()
+
+                    tmp[leftHalf] = tmp.getOrDefault(leftHalf, 0) + count
+                    tmp[rightHalf] = tmp.getOrDefault(rightHalf, 0) + count
+                } else {
+                    val newStone = stone.times(TWO_THOUSAND_TWENTY_FOUR)
+
+                    tmp[newStone] = tmp.getOrDefault(newStone, 0) + count
+                }
+            }
+            stones = tmp.toMap()
+            tmp.clear()
+        }
+        println("We have ${stones.values.sum()} stones after $i blinks. Took ${duration.inWholeMilliseconds}ms")
+    }
+    println("We have ${stones.values.sum()} stones")
 }
